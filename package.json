@@ -1,18 +1,32 @@
 {
   "name": "clwy-app",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "expo-router/entry",
   "dependencies": {
+    "@react-native-vector-icons/material-design-icons": "^13.1.4",
+    "@react-native-vector-icons/simple-line-icons": "^13.1.4",
+    "babel-preset-expo": "~57.0.0",
     "expo": "~57.0.23",
+    "expo-constants": "~57.0.20",
+    "expo-image": "~57.0.5",
+    "expo-linking": "~57.0.11",
+    "expo-router": "~57.0.24",
     "expo-status-bar": "~57.0.1",
     "react": "19.2.3",
-    "react-native": "0.86.3"
+    "react-native": "0.86.3",
+    "react-native-safe-area-context": "~5.7.0",
+    "react-native-screens": "~4.26.0",
+    "urlcat": "^3.1.0"
   },
   "scripts": {
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "format": "prettier --write \"**/*.{js,json,md,ts,jsx,tsx}\""
   },
-  "private": true
+  "private": true,
+  "devDependencies": {
+    "prettier": "^3.9.9"
+  }
 }
