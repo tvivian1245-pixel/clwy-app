@@ -10,22 +10,31 @@ export default function Index() {
   const { data, loading, error, onReload } = useFetchData(url)
   const { recommendedCourses, likesCourses, introductoryCourses } = data
 
-  // 加载中
-  if (loading) {
-    return <Loading />
-  }
+  /**
+   * 根据数据加载状态，渲染不同的内容
+   */
+  const renderContent = () => {
+    // 加载中
+    if (loading) {
+      return <Loading />
+    }
 
-  // 网络错误
-  if (error) {
-    return <NetworkError onReload={onReload} />
+    // 网络错误
+    if (error) {
+      return <NetworkError onReload={onReload} />
+    }
+    return (
+      <>
+        <Slides courses={recommendedCourses} />
+        <CoursesList courses={likesCourses} title="人气视频课程" />
+        <CoursesList courses={introductoryCourses} title="入门视频课程" />
+      </>
+    )
   }
 
   return (
-    <ScrollView style={styles.container}>
-      {/* 推荐的课程 */}
-      <Slides courses={recommendedCourses} />
-      <CoursesList courses={likesCourses} title="人气视频课程" />
-      <CoursesList courses={introductoryCourses} title="入门视频课程" />
+    <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
+      {renderContent()}
     </ScrollView>
   )
 }
@@ -34,5 +43,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
+  },
+  contentContainer: {
+    minHeight: '76%',
   },
 })
