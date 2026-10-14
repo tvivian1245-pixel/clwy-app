@@ -5,10 +5,13 @@ import NetworkError from '@/components/shared/NetworkError'
 import { Link } from 'expo-router'
 import { Image } from 'expo-image'
 import NoData from '@/components/shared/NoData'
+import { useState } from 'react'
+import { get } from '@/utils/request'
 
 export default function Index() {
   const url = '/articles'
-  const { data, loading, error, refreshing, onReload, onRefresh } = useFetchData(url)
+  const { data, loading, error, refreshing, onReload, onRefresh, setData } = useFetchData(url)
+  const [page, setPage] = useState(1)
   const { articles } = data
   const logo = require('@/assets/list-light.webp')
 
@@ -47,6 +50,19 @@ export default function Index() {
    */
   const renderSeparator = () => <View style={styles.separator}></View>
 
+  /**
+   * 上拉加载更多
+   */
+  const onEndReached = async () => {
+    const nextPage = page + 1
+    setPage(nextPage)
+
+    // 请求接口
+    const { data } = await get(url, { page: nextPage })
+    // 将新数据追加到现有列表中
+    setData((prevData) => ({ articles: [...prevData.articles, ...data.articles] }))
+  }
+
   return (
     <FlatList
       style={styles.container}
@@ -59,6 +75,8 @@ export default function Index() {
       refreshControl={
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={'#1f99b0'} />
       }
+      onEndReached={onEndReached}
+      onEndReachedThreshold={0.1}
     />
   )
 }
