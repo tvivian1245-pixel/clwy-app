@@ -5,13 +5,12 @@ import NetworkError from '@/components/shared/NetworkError'
 import { Link } from 'expo-router'
 import { Image } from 'expo-image'
 import NoData from '@/components/shared/NoData'
-import { useState } from 'react'
-import { get } from '@/utils/request'
+import useLoadMore from '@/hooks/useLoadMore'
 
 export default function Index() {
   const url = '/articles'
   const { data, loading, error, refreshing, onReload, onRefresh, setData } = useFetchData(url)
-  const [page, setPage] = useState(1)
+  const { onEndReached, resetLoadMore, LoadMoreFooter } = useLoadMore(url, 'articles', setData)
   const { articles } = data
   const logo = require('@/assets/list-light.webp')
 
@@ -51,18 +50,12 @@ export default function Index() {
   const renderSeparator = () => <View style={styles.separator}></View>
 
   /**
-   * 上拉加载更多
+   * 下拉刷新，并重置加载更多状态
    */
-  const onEndReached = async () => {
-    const nextPage = page + 1
-    setPage(nextPage)
-
-    // 请求接口
-    const { data } = await get(url, { page: nextPage })
-    // 将新数据追加到现有列表中
-    setData((prevData) => ({ articles: [...prevData.articles, ...data.articles] }))
+  const handleRefresh = async () => {
+    await onRefresh()
+    resetLoadMore() // 重置加载更多状态
   }
-
   return (
     <FlatList
       style={styles.container}
@@ -73,10 +66,11 @@ export default function Index() {
       ItemSeparatorComponent={renderSeparator}
       ListEmptyComponent={<NoData />}
       refreshControl={
-        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={'#1f99b0'} />
+        <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor={'#1f99b0'} />
       }
       onEndReached={onEndReached}
       onEndReachedThreshold={0.1}
+      ListFooterComponent={LoadMoreFooter}
     />
   )
 }
