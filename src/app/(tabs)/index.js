@@ -1,4 +1,4 @@
-import { ScrollView, StyleSheet } from 'react-native'
+import { ScrollView, StyleSheet, RefreshControl } from 'react-native'
 import useFetchData from '@/hooks/useFetchData'
 import Loading from '@/components/shared/Loading'
 import NetworkError from '@/components/shared/NetworkError'
@@ -7,7 +7,7 @@ import CoursesList from '@/components/(tabs)/index/CoursesList'
 
 export default function Index() {
   const url = '/'
-  const { data, loading, error, onReload } = useFetchData(url)
+  const { data, loading, error, refreshing, onReload, onRefresh } = useFetchData(url)
   const { recommendedCourses, likesCourses, introductoryCourses } = data
 
   /**
@@ -33,7 +33,11 @@ export default function Index() {
   }
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={styles.contentContainer}
+      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+    >
       {renderContent()}
     </ScrollView>
   )

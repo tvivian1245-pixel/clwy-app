@@ -5,6 +5,7 @@ const useFetchData = (url, params) => {
   const [data, setData] = useState([])
   const [loading, setLoading] = useState(true)
   const [errorMsg, setErrorMsg] = useState(null)
+  const [refreshing, setRefreshing] = useState(false)
 
   const fetchData = async () => {
     try {
@@ -28,7 +29,13 @@ const useFetchData = (url, params) => {
     fetchData()
   }
 
-  return { data, setData, loading, errorMsg, onReload }
+  const onRefresh = async () => {
+    setRefreshing(true)
+    await fetchData()
+    setRefreshing(false)
+  }
+
+  return { data, setData, loading, errorMsg, refreshing, onReload, onRefresh }
 }
 
 export default useFetchData
