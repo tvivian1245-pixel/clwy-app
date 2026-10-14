@@ -1,0 +1,26 @@
+import { View, Text, StyleSheet } from 'react-native'
+import { SimpleLineIcons } from '@react-native-vector-icons/simple-line-icons'
+/**
+ * 暂无数据
+ */
+export default function NoData() {
+  return (
+    <View style={styles.notice}>
+      <SimpleLineIcons name={'drawer'} size={160} color={'#ddd'} />
+      <Text style={styles.noticeMsg}>暂时还没有内容哦~</Text>
+    </View>
+  )
+}
+
+const styles = StyleSheet.create({
+  notice: {
+    height: 500,
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#fff',
+  },
+  noticeMsg: {
+    color: '#999',
+  },
+})

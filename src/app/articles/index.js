@@ -1,10 +1,65 @@
-import { StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, Text, View, Pressable, FlatList, RefreshControl } from 'react-native'
+import useFetchData from '@/hooks/useFetchData'
+import Loading from '@/components/shared/Loading'
+import NetworkError from '@/components/shared/NetworkError'
+import { Link } from 'expo-router'
+import { Image } from 'expo-image'
+import NoData from '@/components/shared/NoData'
 
 export default function Index() {
+  const url = '/articles'
+  const { data, loading, error, refreshing, onReload, onRefresh } = useFetchData(url)
+  const { articles } = data
+  const logo = require('@/assets/list-light.webp')
+
+  if (loading) {
+    return <Loading />
+  }
+
+  if (error) {
+    return <NetworkError onReload={onReload} />
+  }
+
+  /**
+   * 通知列表
+   * @param item
+   */
+  const renderItem = ({ item }) => {
+    return (
+      <Link asChild href={{ pathname: '/articles/[id]', params: { id: item.id } }}>
+        <Pressable>
+          <View style={styles.item}>
+            <Image source={logo} style={styles.image} />
+            <View style={styles.titleWrapper}>
+              <Text style={styles.title} numberOfLines={2}>
+                {item.title}
+              </Text>
+              <Text style={styles.createdAt}>{item.createdAt}</Text>
+            </View>
+          </View>
+        </Pressable>
+      </Link>
+    )
+  }
+
+  /**
+   * 分隔线
+   */
+  const renderSeparator = () => <View style={styles.separator}></View>
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>这里是通知列表页</Text>
-    </View>
+    <FlatList
+      style={styles.container}
+      contentContainerStyle={styles.contentContainer}
+      data={articles}
+      keyExtractor={(item) => item.id.toString()}
+      renderItem={renderItem}
+      ItemSeparatorComponent={renderSeparator}
+      ListEmptyComponent={<NoData />}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={'#1f99b0'} />
+      }
+    />
   )
 }
 
@@ -12,12 +67,44 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+  },
+  contentContainer: {
+    paddingBottom: 20,
+  },
+  item: {
+    padding: 5,
+    height: 90,
+    flexDirection: 'row',
+    backgroundColor: 'transparent',
+  },
+  image: {
+    alignSelf: 'center',
+    height: 70,
+    width: 70,
+  },
+  titleWrapper: {
+    flex: 1,
+    paddingRight: 8,
+    backgroundColor: 'transparent',
   },
   title: {
-    fontSize: 40,
-    fontWeight: 'bold',
-    color: '#4f9df7',
+    marginTop: 18,
+    fontSize: 12,
+    fontWeight: '300',
+    height: 40,
+    lineHeight: 18,
+    color: '#333',
+  },
+  createdAt: {
+    textAlign: 'right',
+    fontSize: 10,
+    fontWeight: '300',
+    color: '555',
+  },
+  separator: {
+    marginLeft: 15,
+    marginRight: 0,
+    height: 1.2,
+    backgroundColor: '#E7DFD3',
   },
 })
