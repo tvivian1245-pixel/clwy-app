@@ -1,15 +1,40 @@
-import { View, Text, StyleSheet } from 'react-native'
-import { Link } from 'expo-router'
+import { StyleSheet, Text } from 'react-native'
+import ScrollableTabView, { ScrollableTabBar } from 'clwy-expo-scrollable-tab-view'
+import useFetchData from '@/hooks/useFetchData'
+import Loading from '@/components/shared/Loading'
+import NetworkError from '@/components/shared/NetworkError'
+import CoursesList from '@/components/shared/CoursesList'
 
 export default function Index() {
-  return (
-    <View style={styles.container}>
-      <Text style={styles.title}>这里是视频课程页</Text>
+  const url = '/categories'
+  const { data, loading, error, onReload } = useFetchData(url)
+  const { categories } = data
 
-      <Link style={styles.link} href="/courses/2?title=React Native">
-        查看 React Native 课程
-      </Link>
-    </View>
+  // 加载中
+  if (loading) return <Loading />
+
+  // 网络错误
+  if (error) return <NetworkError onReload={onReload} />
+
+  // 根据分类数据生成页面
+  const pages = categories.map((item) => {
+    return (
+      <CoursesList key={item.id.toString()} tabLabel={item.name} url={`/categories/${item.id}`} />
+    )
+  })
+  return (
+    <ScrollableTabView
+      style={styles.container}
+      initialPage={0}
+      renderTabBar={() => <ScrollableTabBar />}
+      tabBarUnderlineStyle={styles.barUnderLine}
+      tabBarBackgroundColor={'#fff'}
+      tabBarInactiveTextColor={'#777'}
+      tabBarActiveTextColor={'#000'}
+      tabBarTextStyle={styles.barText}
+    >
+      {pages}
+    </ScrollableTabView>
   )
 }
 
@@ -17,17 +42,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
   },
-  title: {
-    fontSize: 40,
-    fontWeight: 'bold',
-    color: '#e29447',
+  barUnderLine: {
+    backgroundColor: '#1f99b0',
+    height: 2,
   },
-  link: {
-    marginTop: 20,
-    fontSize: 20,
-    color: '#1f99b0',
+  barText: {
+    fontWeight: '400',
   },
 })
