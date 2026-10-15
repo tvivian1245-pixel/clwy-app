@@ -6,6 +6,7 @@
     "@react-native-vector-icons/material-design-icons": "^13.1.4",
     "@react-native-vector-icons/simple-line-icons": "^13.1.4",
     "babel-preset-expo": "~57.0.0",
+    "clwy-react-native-tableview-simple": "^4.5.7",
     "expo": "~57.0.23",
     "expo-constants": "~57.0.20",
     "expo-image": "~57.0.5",
