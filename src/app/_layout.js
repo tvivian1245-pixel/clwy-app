@@ -13,6 +13,12 @@ export default function Layout() {
       <Stack.Screen name="articles/index" options={{ title: '通知' }} />
       <Stack.Screen name="articles/[id]" options={{ title: '通知详情' }} />
       <Stack.Screen name="settings/index" options={{ title: '设置' }} />
+      <Stack.Screen
+        name="settings/[uri]"
+        options={({ route }) => ({
+          title: route.params?.title,
+        })}
+      />
       <Stack.Screen name="courses/[id]" options={{ title: '课程详情' }} />
       <Stack.Screen name="search/index" options={{ title: '搜索' }} />
 

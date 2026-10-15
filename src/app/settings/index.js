@@ -1,14 +1,27 @@
 import { ScrollView, StyleSheet, Alert } from 'react-native'
 import { TableView } from 'clwy-react-native-tableview-simple'
 import { Section, Cell } from '@/components/settings/TableView'
+import { useRouter } from 'expo-router'
 
 export default function Index() {
+  const router = useRouter()
   return (
     <ScrollView style={styles.container}>
       <TableView>
         <Section>
           <Cell title="Wiki" />
-          <Cell title="常用站点" />
+          <Cell
+            title="常用站点"
+            onPress={() => {
+              router.push({
+                pathname: '/settings/[uri]',
+                params: {
+                  uri: `https://reactnative.dev`,
+                  title: '常用站点',
+                },
+              })
+            }}
+          />
         </Section>
 
         <Section>
