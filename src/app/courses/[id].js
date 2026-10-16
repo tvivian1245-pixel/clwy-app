@@ -1,15 +1,49 @@
-import { View, Text, StyleSheet } from 'react-native'
+import { FlatList, StyleSheet, RefreshControl } from 'react-native'
 import { useLocalSearchParams } from 'expo-router'
+
+import NetworkError from '@/components/shared/NetworkError'
+import Loading from '@/components/shared/Loading'
+import useFetchData from '@/hooks/useFetchData'
+import IntroduceInfo from '@/components/courses/IntroduceInfo'
+import ChaptersList from '@/components/courses/ChaptersList'
+import ContentInfo from '@/components/courses/ContentInfo'
+import TeacherInfo from '@/components/courses/TeacherInfo'
 
 export default function Course() {
   const { id } = useLocalSearchParams()
+  const url = `/courses/${id}`
+  const { data, loading, refreshing, onRefresh, error, onReload } = useFetchData(url)
+  const { course, user, chapters } = data
+
+  // 加载中
+  if (loading) {
+    return <Loading />
+  }
+
+  // 网络错误
+  if (error) {
+    return <NetworkError onReload={onReload} />
+  }
+  // 章节列表
+  const renderItem = ({ item }) => <ChaptersList chapter={item} course={course} user={user} />
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>这里是课程页</Text>
-
-      <Text style={styles.info}>课程ID: {id}</Text>
-    </View>
+    <FlatList
+      style={styles.container}
+      data={chapters}
+      keyExtractor={(item) => item.id}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={'#1f99b0'} />
+      }
+      ListHeaderComponent={<IntroduceInfo course={course} />}
+      renderItem={renderItem}
+      ListFooterComponent={
+        <>
+          <ContentInfo course={course} />
+          <TeacherInfo user={user} />
+        </>
+      }
+    />
   )
 }
 
@@ -17,22 +51,5 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  title: {
-    fontSize: 40,
-    fontWeight: 'bold',
-    color: '#4f9df7',
-  },
-  info: {
-    marginTop: 20,
-    fontSize: 20,
-    color: '#67c1b5',
-  },
-  buttonText: {
-    marginTop: 20,
-    fontSize: 20,
-    color: '#ff7f6f',
   },
 })
