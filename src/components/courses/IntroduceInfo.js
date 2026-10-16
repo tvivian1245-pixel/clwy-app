@@ -1,10 +1,30 @@
-import { View, Text, ImageBackground, StyleSheet, TouchableOpacity, Pressable } from 'react-native'
+import {
+  View,
+  Text,
+  ImageBackground,
+  StyleSheet,
+  TouchableOpacity,
+  Pressable,
+  Share,
+  Platform,
+} from 'react-native'
 import { MaterialDesignIcons } from '@react-native-vector-icons/material-design-icons'
 import { Image } from 'expo-image'
 
 export default function IntroduceInfo(props) {
   const { course } = props
 
+  const onShare = async () => {
+    const url = 'https://clwy.cn/courses/fullstack-node'
+    // 线上环境
+    // const url = `${process.env.EXPO_PUBLIC_API_URL}/courses/${course.id}`
+    const message = Platform.OS === 'ios' ? course.name : `${course.name}：\n${url}`
+
+    await Share.share({
+      message,
+      url,
+    })
+  }
   return (
     <View style={styles.container}>
       <ImageBackground
@@ -34,6 +54,7 @@ export default function IntroduceInfo(props) {
                 style={({ pressed }) => [
                   { opacity: pressed ? 0.2 : 1.0 }, // 按压时透明度降至 0.2
                 ]}
+                onPress={onShare}
               >
                 <MaterialDesignIcons name={'share'} size={26} color={'#000'} />
               </Pressable>
