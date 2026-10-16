@@ -25,7 +25,8 @@
       "@react-native-vector-icons/simple-line-icons",
       "expo-image",
       "expo-router",
-      "expo-status-bar"
+      "expo-status-bar",
+      "@react-native-vector-icons/ionicons"
     ]
   }
 }
